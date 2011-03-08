@@ -1,0 +1,8 @@
+This script reads status of translations of packages from Launchpad and generates output to paste on a wiki
+Usage: ./getstatus.py URL
+Or: ./getstatus.py URL > wiki-table.txt
+
+Location of newest version: http://bazaar.launchpad.net/~rachidbm/ubuntu-nl/translating-scripts/view/head:/getstatus.py
+
+Example output on a wiki: http://wiki.ubuntu-nl.org/Rachid/StatusTest
+
