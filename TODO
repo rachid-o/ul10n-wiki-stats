@@ -1,0 +1,3 @@
+ - Support for more CLI arguments (for example don't show untranslated = 0)
+ - Config for upstream packages (make grey or don't show)
+ - Proper test cases/exmples to check if the code still does what you expect
