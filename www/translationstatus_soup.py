@@ -4,7 +4,7 @@ import urllib2, re
 import datetime
 from BeautifulSoup import BeautifulSoup
 
-VERSION="0.3.2"
+VERSION="0.3.4"
 
 SHOW_DEBUG_MESSAGES = True			# False for don't printing debug messages, True for showing debug messages   
 PRINT_FINISHED_TRANSLATIONS = False	# True then also print packages with 0 untranslated strings 
@@ -13,7 +13,6 @@ PRINT_RESERVED_PACKAGES = True		# True print packages which are already reserved
 URL_PREFIX = "https://translations.launchpad.net/"
 NEWLINE = "\n"	
 
-# TODO: Retrieve LP_URL from wiki page
 		
 class TranslationStatus:
 	"""
@@ -53,20 +52,20 @@ class TranslationStatus:
 		wikidata = {}
 		check_for_lp_url = True
 		for line in lines:
-			
+
 			# Copy comments from the wiki
 			if(line.find("##") == 0):
 				self.addline(line.strip())
-				
+
 			# First retrieve URL to Launchpad 
 			if(check_for_lp_url):
 				#debug(find(line, "LAUNCHPAD_URL"))
 				if(line.find("LAUNCHPAD_URL") > 0):
 					# TODO instead of regex do: split("=")[1].strip()
-					self.__LP_URL = re.sub("##\s*LAUNCHPAD_URL\s*=\s*", "", line).strip() 	# Get the URL
-					#u = re.sub("##\s*LAUNCHPAD_URL\s*=\s*", "", line).strip() 	# Get the URL
+					#self.__LP_URL = re.sub("##\s*LAUNCHPAD_URL\s*=\s*", "", line).strip() 	# Get the URL
+					u = re.sub("##\s*LAUNCHPAD_URL\s*=\s*", "", line).strip() 	# Get the URL
 					#self.addline("## Found: "+u)
-					#self.__LP_URL = u
+					self.__LP_URL = u
 					check_for_lp_url = False
 					#debug("Found Launchpad URL on the wiki page: %s " %(__LP_URL))
 					
@@ -95,8 +94,13 @@ class TranslationStatus:
 		#htmlfile = urllib2.urlopen(self.__LP_URL)
 		#self.addline("## __ Opening: "+self.__LP_URL)
 		#return self.__WIKI_CONTENT
-		response = urllib2.urlopen(self.__LP_URL)
-		htmlfile = response.read()
+		htmlfile = ""
+		try:
+			response = urllib2.urlopen(self.__LP_URL)
+			htmlfile = response.read()
+			
+		except urllib2.URLError, e:
+			self.addline(e)
 		#print htmlfile
 		#f = open('test-soup.html', 'r')
 		#htmlfile = f.read()
@@ -107,8 +111,8 @@ class TranslationStatus:
 #		tbl = doc.xpath("/html//table[2]//tr")
 		tbl = soup.html.body.findAll("table")[1]
 		
-		counter = 0		# Count the processed packages (rows)
-		added_packages = 0		# Count the added packages (rows)
+		packages_processed = 0		# Count the processed packages (rows)
+		packages_added = 0		# Count the added packages (rows)
 	
 		# Print header of the wiki table
 		self.addline("||'''Package''' || '''Untranslated''' || '''Needs Review''' || '''Translator''' || '''Reviewer'''||'''Remark'''||")
@@ -119,7 +123,7 @@ class TranslationStatus:
 
 			if(len(tds) > 7):
 
-				counter+=1
+				packages_processed+=1
 				## Name and LP_URL
 				tp = tds[0].findAll('a')[0]
 				
@@ -171,14 +175,15 @@ class TranslationStatus:
 				# Print the row
 				if may_print:
 					self.addline(get_wiki_row(p_name, p_untr_name, p_untr_url, p_review_name, p_review_url, p_translator, p_reviewer, p_remark))
-					added_packages += 1
+					packages_added += 1
 				#else:
 				#	debug ("## %s is skipped" % (p_name))
 				
-		self.addline("%s## %d packages in this list" % (NEWLINE, added_packages))
-		self.addline("## %d packages processed" % (counter))
-		self.addline("## Created on %s " % (datetime.datetime.now().strftime("%Y-%m-%d %H:%M")))
-		#debug("processed rows: %d" % (counter))
+		# Add come informative comments 				
+		self.addline("%s## %d packages in this list" % (NEWLINE, packages_added))
+		self.addline("## %d were packages processed" % (packages_processed))
+		self.addline("## Created on %s (UTC)" % (datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M")))
+		self.addline("## Version of the tool: %s" % (VERSION))
 		return self.__WIKI_CONTENT
 		
 	## END: generate_wiki_table()

@@ -33,7 +33,7 @@ import translationstatus_soup as translationstatus
 ## Configuration ( you may change this)
 LAUNCHPAD_URL_DEFAULT = "https://translations.launchpad.net/ubuntu/natty/+lang/nl/?batch=10"
 #LAUNCHPAD_URL_DEFAULT = "https://translations.launchpad.net/ubuntu/natty/+lang/nl/?batch=10"
-URL_WIKI_PAGE = "http://wiki.ubuntu-nl.org/Rachid/StatusTest/input"
+URL_WIKI_PAGE = "http://wiki.ubuntu-nl.org/Rachid/StatusTest/test2"
 # next batch https://translations.launchpad.net/ubuntu/natty/+lang/nl/+index?start=300&batch=300
 
 
@@ -51,3 +51,4 @@ ts = translationstatus.TranslationStatus(URL_WIKI_PAGE, LP_URL)
 
 table = ts.generate_wiki_table()
 print table
+
