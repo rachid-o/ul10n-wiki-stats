@@ -1,3 +1,0 @@
-# Required Python modules
-#  - python-lxml
-sudo apt-get install python-lxml

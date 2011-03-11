@@ -2,7 +2,9 @@ This script reads status of translations of packages from Launchpad and generate
 Usage: ./getstatus.py URL
 Or: ./getstatus.py URL > wiki-table.txt
 
+Now also available in your browser on http://rachidbm.appspot.com/
 Location of latest version: http://bazaar.launchpad.net/~rachidbm/ubuntu-nl/translating-scripts/view/head:/getstatus.py
 
 Example output on a wiki: http://wiki.ubuntu-nl.org/Rachid/StatusTest
+
 

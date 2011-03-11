@@ -1,10 +1,10 @@
 # Written by RachidBM <https://launchpad.net/~rachidbm>
 
 import urllib2, re
-from lxml import etree
 import datetime
+from BeautifulSoup import BeautifulSoup
 
-VERSION="0.2.1"
+VERSION="0.3.2"
 
 SHOW_DEBUG_MESSAGES = True			# False for don't printing debug messages, True for showing debug messages   
 PRINT_FINISHED_TRANSLATIONS = False	# True then also print packages with 0 untranslated strings 
@@ -54,7 +54,6 @@ class TranslationStatus:
 		check_for_lp_url = True
 		for line in lines:
 			
-			
 			# Copy comments from the wiki
 			if(line.find("##") == 0):
 				self.addline(line.strip())
@@ -63,7 +62,11 @@ class TranslationStatus:
 			if(check_for_lp_url):
 				#debug(find(line, "LAUNCHPAD_URL"))
 				if(line.find("LAUNCHPAD_URL") > 0):
-					__LP_URL = re.sub("##\s*LAUNCHPAD_URL\s*=\s*", "", line).strip() 	# Get the URL
+					# TODO instead of regex do: split("=")[1].strip()
+					self.__LP_URL = re.sub("##\s*LAUNCHPAD_URL\s*=\s*", "", line).strip() 	# Get the URL
+					#u = re.sub("##\s*LAUNCHPAD_URL\s*=\s*", "", line).strip() 	# Get the URL
+					#self.addline("## Found: "+u)
+					#self.__LP_URL = u
 					check_for_lp_url = False
 					#debug("Found Launchpad URL on the wiki page: %s " %(__LP_URL))
 					
@@ -71,7 +74,7 @@ class TranslationStatus:
 				tokens = line.split("||")
 				# Only when enough tokens AND NOT the header of the table
 				if(len(tokens) >= 7 and not tokens[1].startswith("'''")):
-					package_name = re.sub("<.*>", "", tokens[1].strip()) 	# Strip color code 
+					package_name = re.sub("<[^>]*>", "", tokens[1].strip()) 	# Strip color code 
 					translator = tokens[4].strip()
 					reviewer = tokens[5].strip()
 					remark = tokens[6].strip()
@@ -88,58 +91,66 @@ class TranslationStatus:
 		"""Return a table which can be inserted into a wiki page. """
 		
 		workmen = self.process_wiki()
-		
 		#Retrieve HTML from Launchpad
-		htmlfile = urllib2.urlopen(self.__LP_URL)
+		#htmlfile = urllib2.urlopen(self.__LP_URL)
+		#self.addline("## __ Opening: "+self.__LP_URL)
+		#return self.__WIKI_CONTENT
+		response = urllib2.urlopen(self.__LP_URL)
+		htmlfile = response.read()
+		#print htmlfile
+		#f = open('test-soup.html', 'r')
+		#htmlfile = f.read()
+		soup = BeautifulSoup(htmlfile)
+
 		
-		doc = etree.parse(htmlfile, etree.HTMLParser()).getroot()
-		tbl = doc.xpath("/html//table[2]//tr")
+#		doc = etree.parse(htmlfile, etree.HTMLParser()).getroot()
+#		tbl = doc.xpath("/html//table[2]//tr")
+		tbl = soup.html.body.findAll("table")[1]
 		
 		counter = 0		# Count the processed packages (rows)
 		added_packages = 0		# Count the added packages (rows)
 	
 		# Print header of the wiki table
-		# print ("||'''Package''' || '''Untranslated''' || '''Needs Review''' || '''Translator''' || '''Reviewer'''||'''Remark'''||")
 		self.addline("||'''Package''' || '''Untranslated''' || '''Needs Review''' || '''Translator''' || '''Reviewer'''||'''Remark'''||")
 		
-		## Read the HTML <table>
-		for tr in tbl:
-			td = tr.xpath(".//td")
-			if(len(tr.attrib) > 0 and len(td) > 5): 
+		## Read the HTML <table>, loop all rows and process packages
+		for tr in tbl.findAll("tr"):
+			tds =  tr.findAll("td")
+
+			if(len(tds) > 7):
+
 				counter+=1
 				## Name and LP_URL
-				link = td[0].xpath("./a")
-				if(len(link) > 0): 
-					p_name = link[0].text
-					p_url = link[0].get('href')
+				tp = tds[0].findAll('a')[0]
+				
+				p_url = tp['href']
+				p_name = tp.contents[0]
 		
 				## Untranslated
-				_untr_url = td[3].xpath("./a")
-				p_untr_name = ""
+				p_untr_name = "0"
 				p_untr_url = ""
-				if(len(_untr_url) > 0): 
-					p_untr_name = _untr_url[0].text
-					p_untr_url = _untr_url[0].get('href')
-				else:
-					p_untr_name = "0"
-		
+				tu = tds[3].findAll('a')
+				#print len(tu)
+				if len(tu) > 0:
+					p_untr_name = tu[0].contents[0]
+					p_untr_url = tu[0]['href']
+				
 				## Review
-				_review_url = td[4].xpath("./a")
-				p_review_name = ""
+				p_review_name = "0"
 				p_review_url = ""
-				if(len(_review_url) > 0): 
-					p_review_name = _review_url[0].text
-					p_review_url = _review_url[0].get('href')
-				else:
-					p_review_name = "0"
-					
-					
-				## Fill in current translators/reviews			
+				trev = tds[4].findAll('a')
+				#print len(tu)
+				if len(trev) > 0:
+					p_review_name = trev[0].contents[0]
+					p_review_url = trev[0]['href']
+
+				## Fill in current translators/reviews from wiki			
 				p_translator = ""
 				p_reviewer = ""
 				p_remark = ""
+				
 				# if this packages was reserved
-				if(p_name in workmen):
+				if p_name in workmen:
 					p_translator = workmen[p_name][0]
 					p_reviewer = workmen[p_name][1]
 					p_remark = workmen[p_name][2]
@@ -147,24 +158,25 @@ class TranslationStatus:
 				## Some logic to determine if we may print this row to wjki table
 				may_print = False
 				
-				if(len(_untr_url) > 0): 
-					# If there are untranslated strings always print 
+				if int(p_untr_name) > 0: 
+					# If there are untranslated strings, always print
 					may_print = True
-				elif(PRINT_FINISHED_TRANSLATIONS):
+				elif PRINT_FINISHED_TRANSLATIONS:
 					# If you want to print untranslated strings
 					may_print = True
-				elif(PRINT_RESERVED_PACKAGES and (len(p_translator) > 0 or len(p_reviewer) > 0) ):
+				elif PRINT_RESERVED_PACKAGES and (len(p_translator) > 0 or len(p_reviewer) > 0):
 					# If it was reserved already on the wiki let it stay on the list
 					may_print = True
 				
 				# Print the row
-				if(may_print):
-					#self.__WIKI_CONTENT += get_wiki_row(p_name, p_untr_name, p_untr_url, p_review_name, p_review_url, p_translator, p_reviewer, p_remark)
+				if may_print:
 					self.addline(get_wiki_row(p_name, p_untr_name, p_untr_url, p_review_name, p_review_url, p_translator, p_reviewer, p_remark))
 					added_packages += 1
 				#else:
 				#	debug ("## %s is skipped" % (p_name))
+				
 		self.addline("%s## %d packages in this list" % (NEWLINE, added_packages))
+		self.addline("## %d packages processed" % (counter))
 		self.addline("## Created on %s " % (datetime.datetime.now().strftime("%Y-%m-%d %H:%M")))
 		#debug("processed rows: %d" % (counter))
 		return self.__WIKI_CONTENT
@@ -175,7 +187,6 @@ class TranslationStatus:
 	
 def get_wiki_row(name, u_nr, u_url, r_nr, r_url, translator, reviewer, remark):
 	"""Return a row in wiki-syntax."""
-	 
 	u = u_nr
 	r = r_nr
 	color = "<#ff0000>" 	# Default color is red

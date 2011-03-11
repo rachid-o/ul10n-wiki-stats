@@ -1,0 +1,11 @@
+application: rachidbm
+version: 2
+runtime: python
+api_version: 1
+
+handlers:
+- url: /test
+  script: googletest.py
+- url: /.*
+  script: status.py
+  
