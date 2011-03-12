@@ -1,7 +1,9 @@
 import cgi
+import translationstatus_soup as translationstatus
+
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
-import translationstatus_soup as translationstatus
+from google.appengine.api.urlfetch import DownloadError 
 
 
 def p(msg):
@@ -15,7 +17,7 @@ LAUNCHPAD_URL_DEFAULT = "https://translations.launchpad.net/ubuntu/natty/+lang/n
 
 class MainPage(webapp.RequestHandler):
     
-    URL_WIKI_PAGE = "http://wiki.ubuntu-nl.org/Rachid/StatusTest/input"
+    URL_WIKI_PAGE = "http://wiki.ubuntu-nl.org/Rachid/StatusTest"
     
     def get(self):
         go = self.request.get('go')
@@ -28,10 +30,15 @@ class MainPage(webapp.RequestHandler):
             self.URL_WIKI_PAGE = url_wiki
             if go == "true":
                 ts = translationstatus.TranslationStatus(url_wiki, LAUNCHPAD_URL_DEFAULT)
-                wiki_table = ts.generate_wiki_table()
-                wiki_edit_url = "<a href=\"%s?action=edit\" _target=\"_new\">Edit the wiki page</a>" % (self.URL_WIKI_PAGE) 
-        
-        
+                try:
+                    wiki_table = ts.generate_wiki_table() 
+                    wiki_edit_url = "<a href=\"%s?action=edit\" _target=\"_new\">Edit the wiki page</a>" % (self.URL_WIKI_PAGE) 
+                except DownloadError: 
+                    wiki_table = "ERROR: Occurred during fetching URL, please try again..."
+                except ValueError:
+                    wiki_table = "ERROR: No valid input, please try again..."
+
+                
         self.response.out.write("""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
@@ -42,7 +49,9 @@ class MainPage(webapp.RequestHandler):
 <body>
 <header id="page-header">
     <div class="container" >
-        <nav id="main-nav"></nav>
+        <nav id="main-nav">
+            <a href="/" title="Home" class="main-nav-item ">Home</a>
+        </nav>
         <h1 id="top-logo">
             <a href="/">
                 <img class="png" id="the-logo" src="http://www.ubuntu.com/sites/default/themes/ubuntu10/logo.png" alt="Ubuntu" width="118" height="27" />
