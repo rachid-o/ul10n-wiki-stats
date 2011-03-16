@@ -29,19 +29,19 @@ class MainPage(webapp.RequestHandler):
         if url_wiki != "":
             self.URL_WIKI_PAGE = url_wiki
             if go == "true":
-                ts = translationstatus.TranslationStatus(url_wiki, LAUNCHPAD_URL_DEFAULT)
+                ts = translationstatus.TranslationStatus(url_wiki)  # LAUNCHPAD_URL_DEFAULT
                 try:
                     wiki_table = ts.generate_wiki_table() 
                     wiki_edit_url = "<a href=\"%s?action=edit\" _target=\"_new\">Edit the wiki page</a>" % (self.URL_WIKI_PAGE) 
                 except DownloadError: 
                     wiki_table = "ERROR: Occurred during fetching URL, please try again..."
-                except ValueError:
-                    wiki_table = "ERROR: No valid input, please try again..."
+                    wiki_table += "\nNote: sometimes it has problems with fetching an URL, hit the button again and it'll probably work..."
 
                 
         self.response.out.write("""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
+<link rel="shortcut icon" href="media/images/favicon.ico" type="image/ico" />
 <link rel="stylesheet" type="text/css" href="media/css/default.css" />
 <title>Ubuntu Translations</title>
 </head>
@@ -79,10 +79,11 @@ class MainPage(webapp.RequestHandler):
                 URL:          
                 <input type='text' id='url_wiki' name='url_wiki' value='%s' style='width:700px;' />
                 <br />
-            
-                <input type='submit' value='Generate package list'  />
+                <input type='submit' value='Generate package list'  /> 
+                <!--<span class="note">Note: sometimes it has problems with fetching an URL, but when you try it again it works...</span>-->
                 <input type='hidden' id='go' name='go' value='true' />
             </form>
+            <br />
             Output for wiki %s<br />
             <textarea id='output' style='width:900px; height:400px;'>%s</textarea>
     

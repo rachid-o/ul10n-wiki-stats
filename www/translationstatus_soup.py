@@ -4,7 +4,7 @@ import urllib2, re
 import datetime
 from BeautifulSoup import BeautifulSoup
 
-VERSION="0.3.9"
+VERSION="0.3.11"
 
 URL_PREFIX = "https://translations.launchpad.net/"
 NEWLINE = "\n"	
@@ -44,11 +44,15 @@ class TranslationStatus:
 	__wikidata = {}
 
 	
-	def __init__(self, WIKI_URL, LP_URL):
+	def __init__(self, WIKI_URL):
 		self.__WIKI_URL = WIKI_URL
 		self.__WIKI_URL_RAW = WIKI_URL + "?action=raw"
+		#self.__LP_URL = ""
+		#self.__LP_URL = LP_URL
+	
+	def setLP_URL(self, LP_URL):
 		self.__LP_URL = LP_URL
-
+		
 	def addline(self, line):
 		"""Adds a line to the wiki content"""
 		self.__WIKI_CONTENT += line + NEWLINE
@@ -83,7 +87,7 @@ class TranslationStatus:
 		packages_added = 0		# Count the added packages (rows)
 	
 		# Print header of the wiki table
-		self.addline("||<style=\"text-align:right; border:0;\" colspan=\"6\"> [[%s?url_wiki=%s|Click here to update this list|target=\"_new\"]] ||" % (TOOL_URL, self.__WIKI_URL) )
+		self.addline("||<style=\"text-align:right; border:0;\" colspan=\"6\"> [[%s?url_wiki=%s|Click here to synchronize this list with Launchpad|target=\"_new\"]] ||" % (TOOL_URL, self.__WIKI_URL) )
 		self.addline("||'''Package''' || '''Untranslated''' || '''Needs Review''' || '''Translator''' || '''Reviewer'''||'''Remark'''||")
 		
 		## Read the HTML <table>, loop all rows and process packages
@@ -119,6 +123,7 @@ class TranslationStatus:
 				p_translator = ""
 				p_reviewer = ""
 				p_remark = ""
+				p_upstream = False
 				
 				# If this packages was reserved
 				if p_name in self.__wikidata:
@@ -148,7 +153,7 @@ class TranslationStatus:
 				#	debug ("## %s is skipped" % (p_name))
 				
 		# Add come informative comments
-		self.addline("%s Created on %s (UTC)" % (NEWLINE+NEWLINE, datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M")))
+		self.addline("%sLast synchronization with Launchpad: %s (UTC)" % (NEWLINE+NEWLINE, datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M")))
 		self.addline("## %d packages in this list" % (packages_added))
 		self.addline("## %d were packages processed" % (packages_processed))
 		self.addline("## Version of the tool: %s" % (VERSION))
@@ -169,7 +174,7 @@ class TranslationStatus:
 		#response = urllib2.urlopen(self.__WIKI_URL_RAW)
 		response = self.get_response_from_url(self.__WIKI_URL_RAW)
 		if response == "":
-			return self.__wikidata
+			return ""
 		
 		#response = open("/tmp/test.txt", "r")
 		lines = response.readlines()
@@ -226,9 +231,14 @@ class TranslationStatus:
 		except urllib2.HTTPError, e:
 		    self.addline('The server couldn\'t fulfill the request to '+url)
 		    self.addline('Error code: '+ str(e.code))
+		    return "";
 		except urllib2.URLError, e:
 		    self.addline('We failed to reach the server on ' + url)
 		    self.addline('Reason: ' + str(e.reason))
+		    return "";
+		except ValueError, e:
+			#print e
+			self.addline('invalid url')
 		    
 		return response
 	#END: get_response_from_url
