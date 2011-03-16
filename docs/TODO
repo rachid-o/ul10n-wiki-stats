@@ -1,15 +1,20 @@
  TODO
  ====
+ - FIXME: Google App Engine seems to cache the LP pages. Sometimes an URL can't 
+		be downloaded or isn't up-to-date. I think Google App Engine is caching them. 
+ 		An alternative for urllib is urlfetch(from Google App Engine): 
+ 		http://code.google.com/appengine/docs/python/urlfetch/overview.html - S
  - More config options (option input field for LP url, checkbox for skip finished packages, etc) - S
  - Config for upstream packages (don't show) - C
  - Proper test cases/exmples to check if the code still does what you expect - W
- - FIXME: Sometimes an URL can't be downloaded or isn't up-to-date. I think Google App Engine is caching them. An alternative for urllib is urlfetch(from Google App Engine): http://code.google.com/appengine/docs/python/urlfetch/overview.html - S
+
 
 Ideas
 =====
  - Cache Launchpad pages (based on URL?) - C
  - Integrate in moinmoin - W
    * Show checkboxes to reserve packages - W
+
 
 MoSCoW
 ======
@@ -18,4 +23,3 @@ M - MUST have this.
 S - SHOULD have this if at all possible.
 C - COULD have this if it does not affect anything else.
 W - WON'T have this time but WOULD like in the future. Alternatively WANT.
-

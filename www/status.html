@@ -1,44 +1,3 @@
-import cgi
-import translationstatus_soup as translationstatus
-
-from google.appengine.ext import webapp
-from google.appengine.ext.webapp.util import run_wsgi_app
-from google.appengine.api.urlfetch import DownloadError 
-
-
-def p(msg):
-    print "%s<br />" % (msg)
-
-
-# Welcome to http://rachidbm.appspot.com/
-
-LAUNCHPAD_URL_DEFAULT = "https://translations.launchpad.net/ubuntu/natty/+lang/nl/?batch=30"
-
-
-class MainPage(webapp.RequestHandler):
-    
-    URL_WIKI_PAGE = "http://wiki.ubuntu-nl.org/Rachid/StatusTest"
-    
-    def get(self):
-        go = self.request.get('go')
-        url_wiki = self.request.get('url_wiki')
-        
-        wiki_table = ""
-        wiki_edit_url = ""
-        
-        if url_wiki != "":
-            self.URL_WIKI_PAGE = url_wiki
-            if go == "true":
-                ts = translationstatus.TranslationStatus(url_wiki)  # LAUNCHPAD_URL_DEFAULT
-                try:
-                    wiki_table = ts.generate_wiki_table() 
-                    wiki_edit_url = "<a href=\"%s?action=edit\" _target=\"_new\">Edit the wiki page</a>" % (self.URL_WIKI_PAGE) 
-                except DownloadError: 
-                    wiki_table = "ERROR: Occurred during fetching URL, please try again..."
-                    wiki_table += "\nNote: sometimes it has problems with fetching an URL, hit the button again and it'll probably work..."
-
-                
-        self.response.out.write("""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
 <link rel="shortcut icon" href="media/images/favicon.ico" type="image/ico" />
@@ -79,8 +38,7 @@ class MainPage(webapp.RequestHandler):
                 URL:          
                 <input type='text' id='url_wiki' name='url_wiki' value='%s' style='width:700px;' />
                 <br />
-                <input type='submit' value='Generate package list'  /> 
-                <!--<span class="note">Note: sometimes it has problems with fetching an URL, but when you try it again it works...</span>-->
+                <input type='submit' value='Generate package list'  /> <span class="note">Note: sometimes it has problems with fetching an URL, hit this buttong again and hope it'll work...</mark>
                 <input type='hidden' id='go' name='go' value='true' />
             </form>
             <br />
@@ -104,16 +62,3 @@ class MainPage(webapp.RequestHandler):
 
 </body>
 </html>
-        """ % (self.URL_WIKI_PAGE, wiki_edit_url, wiki_table, translationstatus.VERSION))
-
-
-
-application = webapp.WSGIApplication(
-                                     [('/', MainPage)],
-                                     debug=True)
-
-def main():
-    run_wsgi_app(application)
-
-if __name__ == "__main__":
-    main()

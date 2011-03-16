@@ -26,6 +26,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
+
+# This script uses LMXL way more faster than the BeautifulSoup parser
+# But the BeautifulSoup is more up-to-date
 import sys
 import translationstatus_lxml as translationstatus 
 

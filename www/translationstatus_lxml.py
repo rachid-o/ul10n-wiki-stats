@@ -1,10 +1,12 @@
-# Written by RachidBM <https://launchpad.net/~rachidbm>
+# Author RachidBM <https://launchpad.net/~rachidbm>
 
+# This script uses LMXL way more faster than the BeautifulSoup parser
+# But the BeautifulSoup is more up-to-date 
 import urllib2, re
 from lxml import etree
 import datetime
 
-VERSION="0.3"
+VERSION="0.2"
 
 SHOW_DEBUG_MESSAGES = True			# False for don't printing debug messages, True for showing debug messages   
 PRINT_FINISHED_TRANSLATIONS = False	# True then also print packages with 0 untranslated strings 

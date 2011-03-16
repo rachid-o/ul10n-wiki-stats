@@ -1,10 +1,11 @@
-# Written by RachidBM <https://launchpad.net/~rachidbm>
+# Author RachidBM <https://launchpad.net/~rachidbm>
 
+# This BeautifulSoup parser, much slower than LXML, but this works on Google App Engine 
 import urllib2, re
 import datetime
 from BeautifulSoup import BeautifulSoup
 
-VERSION="0.3.11"
+VERSION="0.3.13"
 
 URL_PREFIX = "https://translations.launchpad.net/"
 NEWLINE = "\n"	
@@ -87,7 +88,10 @@ class TranslationStatus:
 		packages_added = 0		# Count the added packages (rows)
 	
 		# Print header of the wiki table
-		self.addline("||<style=\"text-align:right; border:0;\" colspan=\"6\"> [[%s?url_wiki=%s|Click here to synchronize this list with Launchpad|target=\"_new\"]] ||" % (TOOL_URL, self.__WIKI_URL) )
+		url_wiki_edit  = "||<style=\"text-align:left; border:0;\" colspan=\"3\"> [[%s?action=edit|Manually edit this list]] ||" % (self.__WIKI_URL)
+		url_lp_sync = "<style=\"text-align:right; border:0;\" colspan=\"3\"> [[%s?url_wiki=%s|Synchronize this list with Launchpad|target=\"_new\"]] ||" % (TOOL_URL, self.__WIKI_URL) 
+		 
+		self.addline(url_wiki_edit + url_lp_sync)
 		self.addline("||'''Package''' || '''Untranslated''' || '''Needs Review''' || '''Translator''' || '''Reviewer'''||'''Remark'''||")
 		
 		## Read the HTML <table>, loop all rows and process packages
@@ -262,7 +266,7 @@ def get_wiki_row(name, u_nr, u_url, r_nr, r_url, translator, reviewer, remark, u
 		u = "[["+URL_PREFIX+u_url+"|"+u_nr+"|target=\"_new\"]]"
 		color = "<#ff0000>"
 
-	if r_nr != "0":
+	if r_nr != "0" and not upstream:
 		r = "[["+URL_PREFIX+r_url+"|"+r_nr+"|target=\"_new\"]]"
 
 	name = color+name

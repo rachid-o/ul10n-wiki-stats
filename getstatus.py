@@ -26,6 +26,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
+
+# This BeautifulSoup parser, much slower than LXML, but this works on Google App Engine
 import sys
 import translationstatus_soup as translationstatus
 
@@ -44,6 +46,10 @@ URL_WIKI_PAGE = URL_WIKI_PAGE_DEFAULT
 
 if(len(sys.argv) < 2) :
 	print "No location given, reading from default wiki: %s" % (URL_WIKI_PAGE)
+	print "Usage ./getstatus.py http://WIKI [http://LAUNCHPAD]"
+	print "URL to Launchpad is optional"
+	# error  exit status
+	sys.exit(1)
 else:
 	URL_WIKI_PAGE = sys.argv[1];
 	
@@ -62,3 +68,5 @@ ts.WIKI_OVERRIDES_LP_URL = wiki_overrides
 table = ts.generate_wiki_table()
 print table
 
+# Normal exit status
+sys.exit(0)

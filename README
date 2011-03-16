@@ -8,3 +8,20 @@ Location of latest version: http://bazaar.launchpad.net/~rachidbm/ubuntu-nl/tran
 Example output on a wiki: http://wiki.ubuntu-nl.org/Rachid/StatusTest
 
 
+Google App Engine
+=================
+
+On Ubuntu Lucid I needed to run  the local Google App Eninge in a virtual env
+ 
+Virtual Env
+===========
+sudo apt-get install install virtualenv
+mkdir -p ~/opt/python/virtualenvs
+cd ~/opt/python/virtualenvs
+virtualenv appengine --no-site-packages
+# add alias
+echo "alias virtenv='source /home/rachid/opt/python/virtualenvs/appengine/bin/activate'" >> ~/.bash_aliases
+
+
+
+

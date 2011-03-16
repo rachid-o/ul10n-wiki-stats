@@ -1,0 +1,68 @@
+
+
+
+================================================================================
+
+Traceback (most recent call last):
+  File "/base/python_runtime/python_lib/versions/1/google/appengine/ext/webapp/__init__.py", line 515, in __call__
+    handler.get(*groups)
+  File "/base/data/home/apps/rachidbm/2.348951884765507409/status.py", line 31, in get
+    wiki_table = ts.generate_wiki_table()
+  File "/base/data/home/apps/rachidbm/2.348951884765507409/translationstatus_soup.py", line 119, in generate_wiki_table
+    response = self.get_response_from_url(self.__LP_URL)
+  File "/base/data/home/apps/rachidbm/2.348951884765507409/translationstatus_soup.py", line 216, in get_response_from_url
+    response = urllib2.urlopen(url)
+  File "/base/python_runtime/python_dist/lib/python2.5/urllib2.py", line 124, in urlopen
+    return _opener.open(url, data)
+  File "/base/python_runtime/python_dist/lib/python2.5/urllib2.py", line 381, in open
+    response = self._open(req, data)
+  File "/base/python_runtime/python_dist/lib/python2.5/urllib2.py", line 399, in _open
+    '_open', req)
+  File "/base/python_runtime/python_dist/lib/python2.5/urllib2.py", line 360, in _call_chain
+    result = func(*args)
+  File "/base/python_runtime/python_dist/lib/python2.5/urllib2.py", line 1115, in https_open
+    return self.do_open(httplib.HTTPSConnection, req)
+  File "/base/python_runtime/python_dist/lib/python2.5/urllib2.py", line 1080, in do_open
+    r = h.getresponse()
+  File "/base/python_runtime/python_dist/lib/python2.5/httplib.py", line 197, in getresponse
+    self._allow_truncated, self._follow_redirects)
+  File "/base/python_runtime/python_lib/versions/1/google/appengine/api/urlfetch.py", line 245, in fetch
+    return rpc.get_result()
+  File "/base/python_runtime/python_lib/versions/1/google/appengine/api/apiproxy_stub_map.py", line 534, in get_result
+    return self.__get_result_hook(self)
+  File "/base/python_runtime/python_lib/versions/1/google/appengine/api/urlfetch.py", line 338, in _get_fetch_result
+    raise DownloadError(str(err))
+DownloadError: ApplicationError: 5 
+
+
+================================================================================
+Traceback (most recent call last):
+  File "/base/python_runtime/python_lib/versions/1/google/appengine/ext/webapp/__init__.py", line 515, in __call__
+    handler.get(*groups)
+  File "/base/data/home/apps/rachidbm/2.348934100810619347/status.py", line 37, in get
+    wiki_table = ts.generate_wiki_table()
+  File "/base/data/home/apps/rachidbm/2.348934100810619347/translationstatus_soup.py", line 99, in generate_wiki_table
+    response = urllib2.urlopen(self.__LP_URL)
+  File "/base/python_runtime/python_dist/lib/python2.5/urllib2.py", line 124, in urlopen
+    return _opener.open(url, data)
+  File "/base/python_runtime/python_dist/lib/python2.5/urllib2.py", line 381, in open
+    response = self._open(req, data)
+  File "/base/python_runtime/python_dist/lib/python2.5/urllib2.py", line 399, in _open
+    '_open', req)
+  File "/base/python_runtime/python_dist/lib/python2.5/urllib2.py", line 360, in _call_chain
+    result = func(*args)
+  File "/base/python_runtime/python_dist/lib/python2.5/urllib2.py", line 1115, in https_open
+    return self.do_open(httplib.HTTPSConnection, req)
+  File "/base/python_runtime/python_dist/lib/python2.5/urllib2.py", line 1080, in do_open
+    r = h.getresponse()
+  File "/base/python_runtime/python_dist/lib/python2.5/httplib.py", line 197, in getresponse
+    self._allow_truncated, self._follow_redirects)
+  File "/base/python_runtime/python_lib/versions/1/google/appengine/api/urlfetch.py", line 245, in fetch
+    return rpc.get_result()
+  File "/base/python_runtime/python_lib/versions/1/google/appengine/api/apiproxy_stub_map.py", line 534, in get_result
+    return self.__get_result_hook(self)
+  File "/base/python_runtime/python_lib/versions/1/google/appengine/api/urlfetch.py", line 338, in _get_fetch_result
+    raise DownloadError(str(err))
+DownloadError: ApplicationError: 5 
+================================================================================
+

@@ -767,6 +767,7 @@ FORM.search_form INPUT, #searchbox:focus {
     padding: 0px 10px 10px;
     position: relative;
     width: 960px;
+    min-height:300px;
 }
 
 .alone, .leading, .aggregator {
