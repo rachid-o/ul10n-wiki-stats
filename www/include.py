@@ -5,7 +5,7 @@ Common used strings
 """
 
 DEFAULT_WIKI_PAGE = "http://wiki.ubuntu-nl.org/Rachid/TranslationTool"
-LP_CODE_URL = "https://code.launchpad.net/~rachidbm/ubuntu-nl/translating-scripts/"
+LP_CODE_URL = "https://code.launchpad.net/~rachidbm/ubuntu-nl/ul10n-wiki-stats"
 
 
 HEADER = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
