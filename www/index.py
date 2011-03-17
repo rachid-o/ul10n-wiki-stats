@@ -1,15 +1,19 @@
-import cgi
-import translationstatus_soup as translationstatus
-from include import *
-
 from google.appengine.ext import webapp
+from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
-from google.appengine.api.urlfetch import DownloadError 
+from google.appengine.api.urlfetch import DownloadError
 
+import os
+import translationstatus_soup as translationstatus
+
+DEFAULT_WIKI_PAGE = "http://wiki.ubuntu-nl.org/Rachid/TranslationTool"
+LP_CODE_URL = "https://code.launchpad.net/~rachidbm/ubuntu-translations/ul10n-wiki-stats"
+
+template_path = os.path.join(os.path.dirname(__file__), 'index.html')
+template_values = {'version': translationstatus.VERSION }
 
 
 class MainPage(webapp.RequestHandler):
-    
     def get(self):
         go = self.request.get('go')
         url_wiki = self.request.get('url_wiki')
@@ -29,36 +33,37 @@ class MainPage(webapp.RequestHandler):
                 wiki_table = "ERROR: Occurred during fetching URL, please try again..."
                 wiki_table += "\nNote: sometimes it has problems with fetching an URL, hit the button again and it'll probably work..."
 
-        CONTENT =  """<h1>Home</h1>
-        Here you can generate a wiki page for status on Launchpad translations.
-            <ol>
-                <li> Insert the URL to the wiki (status)page in the text field below. </li>  
-                <li> Click on "Generate package list". </li>
-                <li> When no errors, copy/paste the content of the output. </li>
-                <li> Click the "Edit wiki page" to open the wiki page in edit mode. Paste the new content and Save. </li>
-                <li> Voil&agrave;! </li>
-            </ol>
-             
-            <br />
-            <form method="get" action="/">
-                URL:          
-                <input type='text' id='url_wiki' name='url_wiki' value='%s' style='width:700px;' />
-                <br />
-                <input type='submit' value='Generate package list'  /> 
-                <!--<span class="note">Note: sometimes it has problems with fetching an URL, but when you try it again it works...</span>-->
-                <input type='hidden' id='go' name='go' value='true' />
-            </form>
-            <br />
-            Output for wiki %s<br />
-            <textarea id='output' style='width:900px; height:400px;'>%s</textarea>
-        """  % (url_wiki, wiki_edit_url, wiki_table)
-                        
-        self.response.out.write(HEADER + CONTENT + FOOTER)
+        template_values["content"] =  """<h1>Home</h1>
+Here you can generate a wiki page for status on Launchpad translations.
+    <ol>
+        <li> Insert the URL to the wiki (status)page in the text field below. </li>  
+        <li> Click on "Generate package list". </li>
+        <li> When no errors, copy/paste the content of the output. </li>
+        <li> Click the "Edit wiki page" to open the wiki page in edit mode. Paste the new content and Save. </li>
+        <li> Voil&agrave;! </li>
+    </ol>
+     
+    <br />
+    <form method="get" action="/">
+        URL:          
+        <input type='text' id='url_wiki' name='url_wiki' value='%s' style='width:700px;' />
+        <br />
+        <input type='submit' value='Generate package list'  /> 
+        <!--<span class="note">Note: sometimes it has problems with fetching an URL, but when you try it again it works...</span>-->
+        <input type='hidden' id='go' name='go' value='true' />
+    </form>
+    <br />
+    Output for wiki %s<br />
+    <textarea id='output' style='width:900px; height:400px;'>%s</textarea>
+"""  % (url_wiki, wiki_edit_url, wiki_table)
+
+        self.response.out.write(template.render(template_path, template_values))
+
 
 
 class Help(webapp.RequestHandler):
     def get(self):
-        CONTENT = """<h1>Help</h1>
+        template_values["content"] = """<h1>Help</h1>
 <p>
     Example output on a wiki: <a href="%s" target="_new">%s</a> 
 </p>
@@ -93,13 +98,14 @@ class Help(webapp.RequestHandler):
     For example, when you have green (0 untranslated) packages and you want to get rid of them. Just remove the names or remarks from the wiki, and next time this tool will skip those packages.
 </p>
 """ % (DEFAULT_WIKI_PAGE, DEFAULT_WIKI_PAGE)
-        self.response.out.write(HEADER + CONTENT + FOOTER)
+
+        self.response.out.write(template.render(template_path, template_values))
 
 
 
 class About(webapp.RequestHandler):
     def get(self):
-        CONTENT = """
+        template_values["content"] = """
 <h1>About</h1>
 <p>
     This tool reads status of translations of packages from Launchpad and generates output to paste on a wiki.
@@ -117,13 +123,10 @@ class About(webapp.RequestHandler):
 </p>
 
 """ % (LP_CODE_URL)
-        self.response.out.write(HEADER + CONTENT + FOOTER)
+        self.response.out.write(template.render(template_path, template_values))
 
 
-
-
-application = webapp.WSGIApplication(
-                                     [('/', MainPage), ('/about', About), ('/help', Help)],
+application = webapp.WSGIApplication([('/', MainPage), ('/about', About), ('/help', Help)],
                                      debug=True)
 
 def main():
