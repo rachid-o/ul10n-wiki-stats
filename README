@@ -3,24 +3,30 @@ Usage: ./getstatus.py URL
 Or: ./getstatus.py URL > wiki-table.txt
 
 Now also available in your browser on http://rachidbm.appspot.com/
-Location of latest version: http://bazaar.launchpad.net/~rachidbm/ubuntu-nl/translating-scripts/files
+Location of latest version: https://code.launchpad.net/~rachidbm/ubuntu-nl/translating-scripts/
 
-Example output on a wiki: http://wiki.ubuntu-nl.org/Rachid/StatusTest
+Example output on a wiki: http://wiki.ubuntu-nl.org/Rachid/TranslationTool
 
 
-Google App Engine
-=================
+Setup Development Environment
+=============================
+Tested on Python 2.5 and 2.6 
 
-On Ubuntu Lucid I needed to run  the local Google App Eninge in a virtual env
- 
+Optional, for the super fast XML processor LXML you need the package: python-lxml
+sudo apt-get install python-lxml
+
 Virtual Env
 ===========
+Currently, the tool is hosted on the Google App Engine. 
+On Ubuntu Lucid I needed to run the local Google App Eninge (for testing) in a virtual env. 
+
+
 sudo apt-get install install virtualenv
 mkdir -p ~/opt/python/virtualenvs
 cd ~/opt/python/virtualenvs
 virtualenv appengine --no-site-packages
 # add alias
-echo "alias virtenv='source /home/rachid/opt/python/virtualenvs/appengine/bin/activate'" >> ~/.bash_aliases
+echo "alias virtenv='source ~/opt/python/virtualenvs/appengine/bin/activate'" >> ~/.bash_aliases
 
 
 

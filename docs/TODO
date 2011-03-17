@@ -4,8 +4,10 @@
 		be downloaded or isn't up-to-date. I think Google App Engine is caching them. 
  		An alternative for urllib is urlfetch(from Google App Engine): 
  		http://code.google.com/appengine/docs/python/urlfetch/overview.html - S
+ - Optional input field LP_URL for when creating a new wiki page - M
  - More config options (option input field for LP url, checkbox for skip finished packages, etc) - S
  - Config for upstream packages (don't show) - C
+ - Dropdown for selecting a language (and maybe selecting project, i.e. Natty) - C
  - Proper test cases/exmples to check if the code still does what you expect - W
 
 
