@@ -6,7 +6,7 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api.urlfetch import DownloadError 
 
-DEFAULT_WIKI_PAGE = "http://wiki.ubuntu-nl.org/Rachid/TranslationTool"
+
 
 class MainPage(webapp.RequestHandler):
     
@@ -59,17 +59,38 @@ class MainPage(webapp.RequestHandler):
 class Help(webapp.RequestHandler):
     def get(self):
         CONTENT = """<h1>Help</h1>
+<p>
+    Example output on a wiki: <a href="%s" target="_new">%s</a> 
+</p>
 
-<p>Example output on a wiki: <a href="%s">%s</a> </p>
 <h2>Create new status list</h2>
 <p>
-Create a wiki page and add the following line: <br />
-## LAUNCHPAD_URL = https://translations.launchpad.net/ubuntu/natty/+lang/nl/?batch=300 <br />
-Where the URL points to list of packages on Launchpad  <br />
-<br />
-Follow the instructions on the <a href='/'>homepage</a>. 
- <br />
-  <br />
+    Create a wiki page and add the following line: <br />
+    ## LAUNCHPAD_URL = https://translations.launchpad.net/ubuntu/natty/+lang/nl/?batch=300 <br />
+    Where the URL points to list of packages on Launchpad  <br />
+    <br />
+    Follow the instructions on the <a href='/'>homepage</a>. 
+</p>
+
+<h2>How does it work</h2>
+<p>
+    When you see this tool working for the first time, it might look like abracadabra. 
+    Here I'll try to explain what happens under the hood. <br />  
+    <br />
+    First, data from the given wiki page will be collected. Most important is that the wiki page contains a line starting with: '## LAUNCHPAD_URL ='
+    <br />
+    When the data from the wiki is collected, the Launchpad page will be fetched. 
+    <br /> 
+    The tool will run through all the packages retrieved from Launchpad and do some logic. This logic determines if and how the package will be printed in the status list.
+<br />  1. A package is <b>always</b> printed when there was something filled in by hand on the wiki (i.e. the field Translator, Reviewer or Remark contains text).
+<br />  2. Otherwise, when a package has 0 untranslated strings, the package will be skipped.
+<br />  3. When a package was grey (translated upstream), the package'll stay grey.
+</p>
+<h3>Control</h3>
+<p>
+    You may have noticed that the behavior of the tool is based on the wiki page. By changing manually the wiki page you'll change the output for the next time you run this tool.
+    <br />
+    For example, when you have green (0 untranslated) packages and you want to get rid of them. Just remove the names or remarks from the wiki, and next time this tool will skip those packages.
 </p>
 """ % (DEFAULT_WIKI_PAGE, DEFAULT_WIKI_PAGE)
         self.response.out.write(HEADER + CONTENT + FOOTER)
@@ -81,17 +102,21 @@ class About(webapp.RequestHandler):
         CONTENT = """
 <h1>About</h1>
 <p>
-    This script reads status of translations of packages from Launchpad and generates output to paste on a wiki
+    This tool reads status of translations of packages from Launchpad and generates output to paste on a wiki.
     <br />
-    Now also available in your browser on <a href="http://rachidbm.appspot.com/">http://rachidbm.appspot.com/</a> <br />
-    The code is hosted on Launchpad: <a href="http://bazaar.launchpad.net/~rachidbm/ubuntu-nl/translating-scripts/files">here</a>. 
+    The code is available under the <a href="http://en.wikipedia.org/wiki/GNU_General_Public_License" target="_new">GNU GPL license</a> on Launchpad: <a href="%s" target="_new">here</a>. 
 </p>
 
 <h2>Command Line</h2>
 <p>
     This tool also can be used in your Terminal. Check out the code from Launchpad. And run ./getstatus.py 
 </p>
-"""
+<h2>Contact</h2>
+<p>
+     For suggestions, bugs, feature request or anything else, you can contact <a href="https://launchpad.net/~rachidbm/+contactuser" target="_new">Rachid via Launchpad</a>.
+</p>
+
+""" % (LP_CODE_URL)
         self.response.out.write(HEADER + CONTENT + FOOTER)
 
 

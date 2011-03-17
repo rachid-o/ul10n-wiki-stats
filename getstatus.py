@@ -1,41 +1,40 @@
 #!/usr/bin/env python
 
-# This script reads status of translations of packages from Launchpad 
-#  and generates output to paste on a wiki
-# Usage: ./getstatus.py URL
-# Or even better: ./getstatus.py URL > wiki-table.txt
-# 
-# Configuration
-#==============
-# LAUNCHPAD_URL_DEFAULT The URL which is used by default to check Launchpad
-# URL_WIKI_PAGE The URL of the page where this output is pasted on. 
-# 		This will also be used to retrieve current translators/reviewers
+"""
+This script reads status of translations of packages from Launchpad 
+ and generates output to paste on a wiki
+Usage: ./getstatus.py URL
+Or even better: ./getstatus.py URL > wiki-table.txt
 
+Configuration
+=============
+URL_WIKI_PAGE The URL of the page where this output is pasted on. 
+	This will also be used to retrieve current translators/reviewers
 
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
 
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+"""
 
 # This BeautifulSoup parser, much slower than LXML, but this works on Google App Engine
 import sys
-import translationstatus_soup as translationstatus
+import www.translationstatus_soup as translationstatus
 
 
 ## Configuration ( you may change this)
-LAUNCHPAD_URL_DEFAULT = "https://translations.launchpad.net/ubuntu/natty/+lang/nl/?batch=10"
+URL_WIKI_PAGE_DEFAULT = "http://wiki.ubuntu-nl.org/Rachid/TranslationTool"
+
 #LAUNCHPAD_URL_DEFAULT = "https://translations.launchpad.net/ubuntu/natty/+lang/nl/?batch=10"
-URL_WIKI_PAGE_DEFAULT = "http://wiki.ubuntu-nl.org/Rachid/StatusTest"
 # next batch https://translations.launchpad.net/ubuntu/natty/+lang/nl/+index?start=300&batch=300
 
 

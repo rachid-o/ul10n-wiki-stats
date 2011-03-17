@@ -30,7 +30,7 @@
 # This script uses LMXL way more faster than the BeautifulSoup parser
 # But the BeautifulSoup is more up-to-date
 import sys
-import translationstatus_lxml as translationstatus 
+import www.translationstatus_lxml as translationstatus 
 
 ## Configuration ( you may change this)
 LAUNCHPAD_URL_DEFAULT = "https://translations.launchpad.net/ubuntu/natty/+lang/nl/?batch=300"
