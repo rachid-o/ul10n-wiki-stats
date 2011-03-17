@@ -13,8 +13,6 @@ TOOL_URL = "http://rachidbm.appspot.com/"
 """
 TODO: 
  - Pass function or "thing to call" to print messages to (CLI=stdout, HTML=string writer?)
- - Add Edit link on wiki
-			||<style="text-align:right; border:0;" colspan="6"> [[http://rachidbm.appspot.com/?url_wiki=http://wiki.ubuntu-nl.org/Rachid/StatusTest|Click here to update this list|target="_new"]] ||
 """		
 
 class TranslationStatus:

@@ -35,7 +35,7 @@ import www.translationstatus_lxml as translationstatus
 ## Configuration ( you may change this)
 LAUNCHPAD_URL_DEFAULT = "https://translations.launchpad.net/ubuntu/natty/+lang/nl/?batch=300"
 #LAUNCHPAD_URL_DEFAULT = "https://translations.launchpad.net/ubuntu/natty/+lang/nl/?batch=10"
-URL_WIKI_PAGE = "http://wiki.ubuntu-nl.org/Rachid/StatusTest/input"
+URL_WIKI_PAGE = "http://wiki.ubuntu-nl.org/Rachid/TranslationTool"
 # next batch https://translations.launchpad.net/ubuntu/natty/+lang/nl/+index?start=300&batch=300
 
 
