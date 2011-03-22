@@ -5,7 +5,7 @@ import urllib2, re
 import datetime
 from BeautifulSoup import BeautifulSoup
 
-VERSION="0.3.15"
+VERSION="0.4"
 
 URL_PREFIX = "https://translations.launchpad.net/"
 NEWLINE = "\n"	
