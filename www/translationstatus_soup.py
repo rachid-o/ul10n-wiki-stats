@@ -5,7 +5,7 @@ import urllib2, re
 import datetime
 from BeautifulSoup import BeautifulSoup
 
-VERSION="0.3.14"
+VERSION="0.3.15"
 
 URL_PREFIX = "https://translations.launchpad.net/"
 NEWLINE = "\n"	
@@ -253,16 +253,16 @@ def get_wiki_row(name, u_nr, u_url, r_nr, r_url, translator, reviewer, remark, u
 	u = u_nr
 	r = r_nr
 	
-	color = "<#ff0000>" 	# Default color is red
+	color = "<#FF5555>" 	# Default color is red
 	if upstream:
 		color = "<#cccccc>" # grey
 	elif u_nr == "0":
-		color = "<#00ff00>"  # green
-		if(r_nr != "0"):
-			color = "<#00AAFF>"  # blue
+		color = "<#55FF55>"  # green
+		#if(r_nr != "0"):
+		#	color = "<#AAAAFF>"  # blue
 	else:
 		u = "[["+URL_PREFIX+u_url+"|"+u_nr+"|target=\"_new\"]]"
-		color = "<#ff0000>"
+		color = "<#FF5555>"
 
 	if r_nr != "0" and not upstream:
 		r = "[["+URL_PREFIX+r_url+"|"+r_nr+"|target=\"_new\"]]"
