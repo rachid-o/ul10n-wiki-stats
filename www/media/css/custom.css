@@ -1,0 +1,19 @@
+.note {
+	padding-left:20px;
+	font-size: 12px;
+	font-style: italic;
+}
+
+#txtErrors {
+	color:#ff0000;
+}
+
+#pnlButton {
+	float:left;
+}
+
+#load {
+	padding-left:10px;
+	marging-bottom:20px;
+	float:left;
+}

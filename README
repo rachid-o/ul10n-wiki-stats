@@ -15,13 +15,18 @@ Tested on Python 2.5 and 2.6
 Optional, for the super fast XML processor LXML you need the package: python-lxml
 sudo apt-get install python-lxml
 
+
+Getting devserver of App Engine working in lucid
+Go to the dir where the appengine is unpacked and execute:
+sudo cp VERSION /usr/lib/pymodules/python2.6/
+
 Virtual Env
 ===========
 Currently, the tool is hosted on the Google App Engine. 
 On Ubuntu Lucid I needed to run the local Google App Eninge (for testing) in a virtual env. 
 
 
-sudo apt-get install install virtualenv
+sudo apt-get install virtualenv
 mkdir -p ~/opt/python/virtualenvs
 cd ~/opt/python/virtualenvs
 virtualenv appengine --no-site-packages

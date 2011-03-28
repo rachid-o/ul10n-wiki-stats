@@ -1,0 +1,103 @@
+<script type="text/javascript" src="media/js/jquery-1.5.1.min.js"></script>
+
+<h1>Home</h1>
+Here you can generate a wiki page for status on Launchpad translations.
+<ol>
+    <li> Insert the URL to the wiki (status)page in the text field below. </li>  
+    <li> Click on "Generate". </li>
+    <li> When no errors, copy/paste the content of the output. </li>
+    <li> Click the "Edit wiki page" to open the wiki page in edit mode. Paste the new content and Save. </li>
+    <li> Voil&agrave;! </li>
+</ol>
+    <span class="note">Note: sometimes it has problems with fetching an URL, but when you retry it a couple of times it'll work...</span> 
+<br />
+<form id="frm" method="get" action="/">
+    URL:          
+    <input type='text' id='url_wiki' name='url_wiki' value='%s' style='width:700px;' />
+    <br />
+    <div id="pnlButton">
+    	<input type='button' id='btnSubmit' value='Generate'  />
+    </div> 
+    <div id="load"></div>
+		<br />
+    <!-- <button class="generate">Generate!</button></li> -->
+    <input type='hidden' id='go' name='go' value='true' />
+</form>
+<br />
+<div id="txtErrors"></div>
+Output for wiki &nbsp; <span id="wiki_edit_url"></span>
+<br />
+<textarea id='output' style='width:900px; height:400px;'></textarea>
+
+<script type="text/javascript" language="javascript">
+  // <![CDATA[
+  var ajax_load = "<img src='/media/images/load.gif' alt='Loading...' />";
+  var attempts_max = 2;
+  var attempts = 0;
+  $(document).ready(function() {
+  
+	  $("#btnSubmit").click(function() {
+	  	attempts = 0;
+    	getPackageList();
+    });
+    
+    //$("#output").click(function() { this.select(); });
+    
+  });
+  
+  function getPackageList() {
+  
+		$("#txtErrors").html("");
+    $('#btnSubmit').attr("disabled", true);
+    $("#load").html(ajax_load);
+    updateButton("Please wait...");
+  	var url_wiki = $("#url_wiki").val();
+  	
+  	//err("/get?go=true&url_wiki="+url_wiki);
+  	$("#output").val('Retrieving data, please be patient...');
+  	
+  	$.getJSON("/get?go=true&url_wiki="+url_wiki, function(data) {
+  		attempts++;
+    	if(data.errors != "") {
+    		err(data.errors);
+    	} else {
+    		$("#output").val(data.wiki_table);
+    		$("#wiki_edit_url").html(data.wiki_edit_url);
+    	}
+    	
+    	if(data.retry && attempts <= attempts_max) {
+    	
+    		err("Something went wrong, retry "+attempts+" of "+attempts_max+" in 3 secs..");
+    		$('#btnSubmit').attr("disabled", true);
+    		setTimeout('updateButton("Retry in 3 secs...")', 0000);
+    		setTimeout('updateButton("Retry in 2 secs...")', 1000);
+    		setTimeout('updateButton("Retry in 1 secs...")', 2000);
+    		setTimeout('updateButton("Retry in 0 secs...")', 3000);
+    		setTimeout('getPackageList()', 3100);
+    	}
+		})
+		.success(function(){ 
+			$('#btnSubmit').attr("disabled", false);
+		})
+		.error(function(data) {
+			err("Error, please try again...")
+		})
+		.complete(function(data) {
+			updateButton("Generate");
+			$('#btnSubmit').attr("disabled", false);
+			$("#load").html("");
+		});
+		
+  }
+  
+  function updateButton(text) {
+  	$("#btnSubmit").val(text); 
+  }
+  
+  function err(msg) {
+  	$("#txtErrors").html($("#txtErrors").html() + msg + "<br />"); 
+  }
+  
+  
+  // ]]>
+</script>

@@ -5,14 +5,14 @@ import urllib2, re
 import datetime
 from BeautifulSoup import BeautifulSoup
 
-VERSION="0.4"
+VERSION="0.4.1"
 
 URL_PREFIX = "https://translations.launchpad.net/"
 NEWLINE = "\n"	
 TOOL_URL = "http://rachidbm.appspot.com/"
 """
 TODO: 
- - Pass function or "thing to call" to print messages to (CLI=stdout, HTML=string writer?)
+ - Pass function or "thing to call" to print messages for logging to (CLI=stdout, HTML=string writer?)
 """		
 
 class TranslationStatus:
@@ -22,10 +22,10 @@ class TranslationStatus:
 	"""
 
 	# public
-	STDOUT_DEBUG_MESSAGES = True			
+	STDOUT_DEBUG_MESSAGES = True
 	"""True, print debug messages"""
    
-	PRINT_FINISHED_TRANSLATIONS = False	
+	PRINT_FINISHED_TRANSLATIONS = False
 	"""True, print finished packages (with 0 untranslated strings). 
 	This means always print all packages from Launchpad URL"""
 	 
@@ -156,7 +156,7 @@ class TranslationStatus:
 				
 		# Add come informative comments
 		self.addline("%sLast synchronization with Launchpad: %s (UTC)" % (NEWLINE+NEWLINE, datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M")))
-		self.addline("## %d packages in this list" % (packages_added))
+		self.addline("<<BR>>%d packages in this list" % (packages_added))
 		self.addline("## %d were packages processed" % (packages_processed))
 		self.addline("## Version of the tool: %s" % (VERSION))
 		return self.__WIKI_CONTENT
@@ -228,6 +228,8 @@ class TranslationStatus:
 
 	def get_response_from_url(self, url):
 		response = ""
+		response = urllib2.urlopen(url)
+		
 		try:
 			response = urllib2.urlopen(url)
 		except urllib2.HTTPError, e:
