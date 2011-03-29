@@ -3,8 +3,8 @@
  - FIXME: Google App Engine seems to cache the LP pages. Sometimes an URL can't 
 		be downloaded or isn't up-to-date. I think Google App Engine is caching them. 
  		An alternative for urllib is urlfetch(from Google App Engine): 
- 		http://code.google.com/appengine/docs/python/urlfetch/overview.html - S
-	* possible workaround auto-retry on fail
+ 		http://code.google.com/appengine/docs/python/urlfetch/overview.html - C
+ - FIXME: When a package is on the wiki, but not op LP_URL it will disappear, is this desirable?
  - Optional input field LP_URL for when creating a new wiki page - M
  - More config options (option input field for LP url, checkbox for skip finished packages, show packages which only need review, etc) - S
  - Config for upstream packages (don't show) - C

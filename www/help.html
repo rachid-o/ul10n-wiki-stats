@@ -26,7 +26,8 @@
     The tool will run through all the packages retrieved from Launchpad and do some logic. This logic determines if and how the package will be printed in the status list.
 <br />  1. A package is <b>always</b> printed when there was something filled in by hand on the wiki (i.e. the field Translator, Reviewer or Remark contains text).
 <br />  2. Otherwise, when a package has 0 untranslated strings, the package will be skipped.
-<br />  3. When a package was grey (translated upstream), the package'll stay grey.
+<br />  3. When a package was grey (translated upstream), the package'll stay grey. <br />
+		<strong>Keep this package grey even it has 0 untranslated strings. </strong> This way it will stay in the list and marked as upstream. If you make it green, it'll disappear from the list next time you use this tool.
 </p>
 <h3>Control</h3>
 <p>
