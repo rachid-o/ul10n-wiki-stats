@@ -5,7 +5,7 @@ import urllib2, re
 import datetime
 from BeautifulSoup import BeautifulSoup
 
-VERSION="0.4.1"
+VERSION="0.4.2"
 
 URL_PREFIX = "https://translations.launchpad.net/"
 NEWLINE = "\n"	
@@ -121,19 +121,15 @@ class TranslationStatus:
 					p_review_name = trev[0].contents[0]
 					p_review_url = trev[0]['href']
 
-				## Fill in current translators/reviews from wiki			
+			
+				## Fill in current data from wiki			
 				p_translator = ""
 				p_reviewer = ""
-				p_remark = ""
-				p_upstream = False
-				
-				# If this packages was reserved
+						
 				if p_name in self.__wikidata:
 					p_translator = self.__wikidata[p_name][0]
 					p_reviewer = self.__wikidata[p_name][1]
-					p_remark = self.__wikidata[p_name][2]
-					p_upstream = self.__wikidata[p_name][3]
-				
+					
 				## Some logic to determine if we may print this row to wjki table
 				may_print = False
 				
@@ -149,7 +145,7 @@ class TranslationStatus:
 				
 				# Print the row
 				if may_print:
-					self.addline(get_wiki_row(p_name, p_untr_name, p_untr_url, p_review_name, p_review_url, p_translator, p_reviewer, p_remark, p_upstream))
+					self.addline(self.get_wiki_row(p_name, p_untr_name, p_untr_url, p_review_name, p_review_url, p_translator, p_reviewer))
 					packages_added += 1
 				#else:
 				#	debug ("## %s is skipped" % (p_name))
@@ -205,6 +201,7 @@ class TranslationStatus:
 				tokens = line.split("||")
 				# Only when enough tokens AND NOT the header of the table
 				if(len(tokens) >= 7 and not tokens[1].startswith("'''")):
+					review = False
 					upstream = False
 					pname = tokens[1].strip()
 					
@@ -212,7 +209,12 @@ class TranslationStatus:
 					if package_name != pname:
 						upstream = True
 					else: 
-						package_name = re.sub("<[^>]*>", "", tokens[1].strip()) 	# Strip color code
+						# TODO: case insensitive??
+						package_name = re.sub("<#00AAFF>", "", pname).strip() 	# Strip review?
+						if package_name != pname:
+							review = True
+						else:
+							package_name = re.sub("<[^>]*>", "", tokens[1].strip()) 	# Strip color code
 					
 					translator = tokens[4].strip()
 					reviewer = tokens[5].strip()
@@ -220,7 +222,7 @@ class TranslationStatus:
 					
 					# If 1 of the fields is filled in
 					if len(translator) > 0 or len(reviewer) > 0 or len(remark) > 0 or upstream:
-						self.__wikidata[package_name] = (translator, reviewer, remark, upstream)
+						self.__wikidata[package_name] = (translator, reviewer, remark, review, upstream)
 					
 	## END: process_wiki()
 	
@@ -247,32 +249,48 @@ class TranslationStatus:
 		return response
 	#END: get_response_from_url
 	
+	
+	def get_wiki_row(self, name, u_nr, u_url, r_nr, r_url, translator, reviewer):
+		"""Return a row in wiki-syntax."""
+		u = u_nr
+		r = r_nr
+		
+		## Fill in current data from wiki			
+		remark = ""
+		review = False
+		upstream = False
+				
+		if name in self.__wikidata:
+			remark = self.__wikidata[name][2]
+			review = self.__wikidata[name][3]
+			upstream = self.__wikidata[name][4]
+			
+		color = "<#FF5555>" 	# Default color is red
+		if upstream:
+			color = "<#cccccc>" # grey
+		elif review:
+			color = "<#00AAFF>" # blue
+			u = "[["+URL_PREFIX+u_url+"|"+u_nr+"|target=\"_new\"]]"
+		elif u_nr == "0":
+			color = "<#55FF55>"  # green
+			#if(r_nr != "0"):
+			#	color = "<#00AAFF>"  # blue
+		else:
+			u = "[["+URL_PREFIX+u_url+"|"+u_nr+"|target=\"_new\"]]"
+			color = "<#FF5555>"
+	
+		if r_nr != "0" and not upstream:
+			r = "[["+URL_PREFIX+r_url+"|"+r_nr+"|target=\"_new\"]]"
+	
+		name = color+name
+		return "||%s ||%s ||%s || %s || %s || %s ||" % (name, u, r, translator, reviewer, remark)
+	
+	#END get_wiki_row
+
+
 #END: TranslationStatus
 	
 	
-def get_wiki_row(name, u_nr, u_url, r_nr, r_url, translator, reviewer, remark, upstream):
-	"""Return a row in wiki-syntax."""
-	u = u_nr
-	r = r_nr
-	
-	color = "<#FF5555>" 	# Default color is red
-	if upstream:
-		color = "<#cccccc>" # grey
-	elif u_nr == "0":
-		color = "<#55FF55>"  # green
-		#if(r_nr != "0"):
-		#	color = "<#AAAAFF>"  # blue
-	else:
-		u = "[["+URL_PREFIX+u_url+"|"+u_nr+"|target=\"_new\"]]"
-		color = "<#FF5555>"
-
-	if r_nr != "0" and not upstream:
-		r = "[["+URL_PREFIX+r_url+"|"+r_nr+"|target=\"_new\"]]"
-
-	name = color+name
-	return "||%s ||%s ||%s || %s || %s || %s ||" % (name, u, r, translator, reviewer, remark)
-#END get_wiki_row
-
 
 def debug(message):
 	"""Print a DEBUG message"""
