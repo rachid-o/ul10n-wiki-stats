@@ -5,7 +5,7 @@ import urllib2, re
 import datetime
 from BeautifulSoup import BeautifulSoup
 
-VERSION="0.4.2"
+VERSION="0.4.3"
 
 URL_PREFIX = "https://translations.launchpad.net/"
 NEWLINE = "\n"	
@@ -82,8 +82,6 @@ class TranslationStatus:
 #		tbl = doc.xpath("/html//table[2]//tr")
 		tbl = soup.html.body.findAll("table")[1]
 		
-		packages_processed = 0		# Count the processed packages (rows)
-		packages_added = 0		# Count the added packages (rows)
 	
 		# Print header of the wiki table
 		url_wiki_edit  = "||<style=\"text-align:left; border:0;\" colspan=\"3\"> [[%s?action=edit|Manually edit this list]] ||" % (self.__WIKI_URL)
@@ -91,6 +89,15 @@ class TranslationStatus:
 		 
 		self.addline(url_wiki_edit + url_lp_sync)
 		self.addline("||'''Package''' || '''Untranslated''' || '''Needs Review''' || '''Translator''' || '''Reviewer'''||'''Remark'''||")
+		
+		
+		total_untr = 0
+		total_review = 0
+		total_untr_upstream = 0
+		total_review_upstream = 0
+		
+		packages_processed = 0		# Count the processed packages (rows)
+		packages_added = 0		# Count the added packages (rows)
 		
 		## Read the HTML <table>, loop all rows and process packages
 		for tr in tbl.findAll("tr"):
@@ -147,10 +154,24 @@ class TranslationStatus:
 				if may_print:
 					self.addline(self.get_wiki_row(p_name, p_untr_name, p_untr_url, p_review_name, p_review_url, p_translator, p_reviewer))
 					packages_added += 1
+					
+					total_untr = total_untr + int(p_untr_name)
+					total_review = total_review + int(p_review_name)
+					
+					if p_name in self.__wikidata:
+						if self.__wikidata[p_name][4] == True: 
+							total_untr_upstream = total_untr_upstream + int(p_untr_name)
+							total_review_upstream = total_review_upstream + int(p_review_name)
+							
 				#else:
 				#	debug ("## %s is skipped" % (p_name))
 				
+				
 		# Add come informative comments
+		self.addline("||<style=\"border:0;\"> Total untranslated ||<style=\"border:0;\"> %s ||<style=\"border:0;\"> %s ||<style=\"border:0; colspan=3;\">  ||" % (total_untr, total_review))
+		self.addline("||<style=\"border:0;\"> Total upstream ||<style=\"border:0;\"> %s ||<style=\"border:0;\"> %s ||<style=\"border:0; colspan=3;\"> ||" % (total_untr_upstream, total_review_upstream))
+		self.addline("||<style=\"border:0;\"> TODO ||<style=\"border:0;\"> '''%s''' ||<style=\"border:0;\"> '''%s''' ||<style=\"border:0; colspan=3;\"> ||" % (total_untr-total_untr_upstream, total_review-total_review_upstream))
+		
 		self.addline("%sLast synchronization with Launchpad: %s (UTC)" % (NEWLINE+NEWLINE, datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M")))
 		self.addline("<<BR>>%d packages in this list" % (packages_added))
 		self.addline("## %d were packages processed" % (packages_processed))
@@ -226,30 +247,7 @@ class TranslationStatus:
 					
 	## END: process_wiki()
 	
-	
-
-	def get_response_from_url(self, url):
-		response = ""
-		response = urllib2.urlopen(url)
 		
-		try:
-			response = urllib2.urlopen(url)
-		except urllib2.HTTPError, e:
-		    self.addline('The server couldn\'t fulfill the request to '+url)
-		    self.addline('Error code: '+ str(e.code))
-		    return "";
-		except urllib2.URLError, e:
-		    self.addline('We failed to reach the server on ' + url)
-		    self.addline('Reason: ' + str(e.reason))
-		    return "";
-		except ValueError, e:
-			#print e
-			self.addline('invalid url')
-		    
-		return response
-	#END: get_response_from_url
-	
-	
 	def get_wiki_row(self, name, u_nr, u_url, r_nr, r_url, translator, reviewer):
 		"""Return a row in wiki-syntax."""
 		u = u_nr
@@ -284,8 +282,29 @@ class TranslationStatus:
 	
 		name = color+name
 		return "||%s ||%s ||%s || %s || %s || %s ||" % (name, u, r, translator, reviewer, remark)
-	
 	#END get_wiki_row
+
+
+	def get_response_from_url(self, url):
+		response = ""
+		response = urllib2.urlopen(url)
+		
+		try:
+			response = urllib2.urlopen(url)
+		except urllib2.HTTPError, e:
+		    self.addline('The server couldn\'t fulfill the request to '+url)
+		    self.addline('Error code: '+ str(e.code))
+		    return "";
+		except urllib2.URLError, e:
+		    self.addline('We failed to reach the server on ' + url)
+		    self.addline('Reason: ' + str(e.reason))
+		    return "";
+		except ValueError, e:
+			#print e
+			self.addline('invalid url')
+		    
+		return response
+	#END: get_response_from_url
 
 
 #END: TranslationStatus
