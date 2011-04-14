@@ -5,7 +5,7 @@ import urllib2, re
 import datetime
 from BeautifulSoup import BeautifulSoup
 
-VERSION="0.4.3"
+VERSION="0.4.5"
 
 URL_PREFIX = "https://translations.launchpad.net/"
 NEWLINE = "\n"	
@@ -287,7 +287,12 @@ class TranslationStatus:
 
 	def get_response_from_url(self, url):
 		response = ""
-		response = urllib2.urlopen(url)
+		# response = urllib2.urlopen(url)
+		opener = urllib2.build_opener()
+		# headers = {'Cache-Control' : 'max-age=240'}
+		opener.addheaders = [('Cache-Control', 'max-age=10')]
+		response = opener.open(url)
+
 		
 		try:
 			response = urllib2.urlopen(url)
