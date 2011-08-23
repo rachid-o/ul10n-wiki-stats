@@ -44,7 +44,7 @@ URL_WIKI_PAGE = URL_WIKI_PAGE_DEFAULT
 #LP_URL = LAUNCHPAD_URL_DEFAULT
 
 if(len(sys.argv) < 2) :
-	print "No location given, reading from default wiki: %s" % (URL_WIKI_PAGE)
+	#print "No location given, reading from default wiki: %s" % (URL_WIKI_PAGE)
 	print "Usage ./getstatus.py http://WIKI [http://LAUNCHPAD]"
 	print "URL to Launchpad is optional"
 	# error  exit status

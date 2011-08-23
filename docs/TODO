@@ -1,7 +1,8 @@
  TODO
  ====
+ - Turn blue into green when 0 untranslated and 0 needs review - M
  - FIXME: When a package is on the wiki, but not op LP_URL it will disappear, is this desirable?
- - Config for upstream packages in wiki comment, so it'll made grey when the package appear again - M
+ - Config for upstream packages in wiki comment, so it'll made grey when the package appear again - S
  - Optional input field LP_URL for when creating a new wiki page - M
  - More config options (option input field for LP url, checkbox for skip finished packages, show packages which only need review, etc) - S
  - Dropdown for selecting a language (and maybe selecting project, i.e. Natty) - C

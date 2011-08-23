@@ -1,6 +1,6 @@
 # Author RachidBM <https://launchpad.net/~rachidbm>
 
-# This BeautifulSoup parser, much slower than LXML, but this works on Google App Engine 
+# This class uses BeautifulSoup parser, much slower than LXML, but this works on Google App Engine 
 import urllib2, re
 import datetime
 from BeautifulSoup import BeautifulSoup

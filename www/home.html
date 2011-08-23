@@ -87,9 +87,10 @@ Output for wiki &nbsp; <span id="wiki_edit_url"></span>
 			err("Error, please try again...")
 		})
 		.complete(function(data) {
+			
+			$("#load").html("");
 			updateButton("Generate");
 			$('#btnSubmit').attr("disabled", false);
-			$("#load").html("");
 		});
 		
   }
