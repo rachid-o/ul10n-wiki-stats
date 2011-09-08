@@ -3,7 +3,8 @@ Usage: ./getstatus.py URL
 Or: ./getstatus.py URL > wiki-table.txt
 
 Now also available in your browser on http://rachidbm.appspot.com/
-Location of latest version: https://code.launchpad.net/~rachidbm/ubuntu-nl/translating-scripts/
+Project page: https://launchpad.net/ul10n-wiki-stats
+Location of latest version: http://code.launchpad.net/ul10n-wiki-stats
 
 Example output on a wiki: http://wiki.ubuntu-nl.org/Rachid/TranslationTool
 
@@ -19,6 +20,13 @@ sudo apt-get install python-lxml
 Getting devserver of App Engine working in lucid
 Go to the dir where the appengine is unpacked and execute:
 sudo cp VERSION /usr/lib/pymodules/python2.6/
+
+
+Google App Engine
+=================
+Startup webserver: ./dev_appserver.py www/
+Deploy on app engine: ./appcfg.py update
+
 
 Virtual Env
 ===========
