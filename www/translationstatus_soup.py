@@ -5,7 +5,7 @@ import urllib2, re
 import datetime
 from BeautifulSoup import BeautifulSoup
 
-VERSION="0.4.6"
+VERSION="0.4.7"
 
 URL_PREFIX = "https://translations.launchpad.net/"
 NEWLINE = "\n"
@@ -237,7 +237,7 @@ class TranslationStatus:
                     remark = tokens[6].strip()
 
                     # If 1 of the fields is filled in
-                    if len(translator) > 0 or len(reviewer) > 0 or len(remark) > 0 or upstream:
+                    if len(translator) > 0 or len(reviewer) > 0 or len(remark) > 0 or upstream or review:
                         self.__wikidata[package_name] = (translator, reviewer, remark, review, upstream)
 
     ## END: process_wiki()
