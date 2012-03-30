@@ -9,7 +9,7 @@ Or even better: ./getstatus.py URL > wiki-table.txt
 Configuration
 =============
 URL_WIKI_PAGE The URL of the page where this output is pasted on. 
-	This will also be used to retrieve current translators/reviewers
+This URL will also be used to retrieve current translators/reviewers
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -34,8 +34,8 @@ import www.translationstatus_soup as translationstatus
 ## Configuration ( you may change this)
 URL_WIKI_PAGE_DEFAULT = "http://wiki.ubuntu-nl.org/Rachid/TranslationTool"
 
-#LAUNCHPAD_URL_DEFAULT = "https://translations.launchpad.net/ubuntu/natty/+lang/nl/?batch=10"
-# next batch https://translations.launchpad.net/ubuntu/natty/+lang/nl/+index?start=300&batch=300
+#LAUNCHPAD_URL_DEFAULT = "https://translations.launchpad.net/ubuntu/precise/+lang/nl/?batch=10"
+# next batch https://translations.launchpad.net/ubuntu/precise/+lang/nl/+index?start=300&batch=300
 
 
 wiki_overrides = True
@@ -44,25 +44,25 @@ URL_WIKI_PAGE = URL_WIKI_PAGE_DEFAULT
 #LP_URL = LAUNCHPAD_URL_DEFAULT
 
 if(len(sys.argv) < 2) :
-	#print "No location given, reading from default wiki: %s" % (URL_WIKI_PAGE)
-	print "Usage ./getstatus.py http://WIKI [http://LAUNCHPAD]"
-	print "URL to Launchpad is optional"
-	# error  exit status
-	sys.exit(1)
+    #print "No location given, reading from default wiki: %s" % (URL_WIKI_PAGE)
+    print "Usage ./getstatus.py http://WIKI [http://LAUNCHPAD]"
+    print "URL to Launchpad is optional"
+    # error  exit status
+    sys.exit(1)
 else:
-	URL_WIKI_PAGE = sys.argv[1];
-	
-	
+    URL_WIKI_PAGE = sys.argv[1];
+    
+    
 print "Wiki: %s" % (URL_WIKI_PAGE)
 #print "Launchpad: %s" % (LP_URL)
 
 ts = translationstatus.TranslationStatus(URL_WIKI_PAGE)
 if(len(sys.argv) > 2) :
-	ts.setLP_URL(sys.argv[2])
-	wiki_overrides = False	# Gave LP_URL as parameter, so you really want this page
-	print "Launchpad: %s" % (sys.argv[2])
-	
-ts.WIKI_OVERRIDES_LP_URL = wiki_overrides	
+    ts.setLP_URL(sys.argv[2])
+    wiki_overrides = False  # Gave LP_URL as parameter, so you really want this page
+    print "Launchpad: %s" % (sys.argv[2])
+    
+ts.WIKI_OVERRIDES_LP_URL = wiki_overrides   
 
 table = ts.generate_wiki_table()
 print table

@@ -25,7 +25,7 @@ sudo cp VERSION /usr/lib/pymodules/python2.6/
 Google App Engine
 =================
 Startup webserver: ./dev_appserver.py www/
-Deploy on app engine: ./appcfg.py update
+Deploy on app engine: ./appcfg.py update www
 
 
 Virtual Env

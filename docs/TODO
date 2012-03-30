@@ -2,18 +2,16 @@
  ====
  - FIXME: When a package is on the wiki, but not op LP_URL it will disappear, is this desirable?
  - Config for upstream packages in wiki comment, so it'll made grey when the package appear again - S
- - Optional input field LP_URL for when creating a new wiki page - M
+ - Optional input field LP_URL for when creating a new wiki page - S
  - More config options (option input field for LP url, checkbox for skip finished packages, show packages which only need review, etc) - S
- - Dropdown for selecting a language (and maybe selecting project, i.e. Natty) - C
- - Proper test cases/exmples to check if the code still does what you expect - W
-
+ - Dropdown for selecting a language (and maybe selecting project, i.e. Precise) - C
+ - Proper test cases/exmples to check if the code still does what you expect - S
 
 Ideas
 =====
- - Cache Launchpad pages (based on URL?) - C
  - Integrate in moinmoin - W
    * Show checkboxes to reserve packages - W
-
+ - Integrate this concept of reservation by users in Launchpad in some way - W
 
 MoSCoW
 ======

@@ -5,7 +5,7 @@ import urllib2, re
 import datetime
 from BeautifulSoup import BeautifulSoup
 
-VERSION="0.4.7"
+VERSION="0.4.8"
 
 URL_PREFIX = "https://translations.launchpad.net/"
 NEWLINE = "\n"
@@ -22,12 +22,12 @@ class TranslationStatus:
     """
 
     # public
-    STDOUT_DEBUG_MESSAGES = True
-    """True, print debug messages"""
-
     PRINT_FINISHED_TRANSLATIONS = False
     """True, print finished packages (with 0 untranslated strings).
     This means always print all packages from Launchpad URL"""
+
+    PRINT_NEEDSREVIEW_TRANSLATIONS = False
+    """True, print packages with new suggestions (needs review is > 0)"""
 
     PRINT_RESERVED_PACKAGES = True
     """True, print packages which were already reserved on the wiki by a translator or reviewer"""
@@ -35,13 +35,15 @@ class TranslationStatus:
     WIKI_OVERRIDES_LP_URL = True
     """True, URL to Launchpad will be overridden by an URL found on the wiki (if found)"""
     
+    STDOUT_DEBUG_MESSAGES = False
+    """True, print debug messages"""
+
     # private   
     __WIKI_URL = ""
     __WIKI_URL_RAW = ""
     __LP_URL = ""
     __WIKI_CONTENT = ""
     __wikidata = {}
-
 
     def __init__(self, WIKI_URL):
         self.__WIKI_URL = WIKI_URL
@@ -54,8 +56,6 @@ class TranslationStatus:
     def addline(self, line):
         """Adds a line to the wiki content"""
         self.__WIKI_CONTENT += line + NEWLINE
-    #END addline
-
 
     def generate_wiki_table(self):
         """Return a table which can be inserted into a wiki page. """
@@ -132,7 +132,7 @@ class TranslationStatus:
                     p_translator = self.__wikidata[p_name][0]
                     p_reviewer = self.__wikidata[p_name][1]
 
-                ## Some logic to determine if we may print this row to wjki table
+                ## Some logic to determine if we may print this row to wiki table
                 may_print = False
 
                 if int(p_untr_name) > 0: 
@@ -141,8 +141,11 @@ class TranslationStatus:
                 elif self.PRINT_FINISHED_TRANSLATIONS:
                     # If you want to print untranslated strings
                     may_print = True
-                elif self.PRINT_RESERVED_PACKAGES and (len(p_translator) > 0 or len(p_reviewer) > 0):
+                elif self.PRINT_RESERVED_PACKAGES and (len(p_translator) > 0 
+                    or len(p_reviewer) > 0):
                     # If it was reserved already on the wiki let it stay on the list
+                    may_print = True
+                elif self.PRINT_NEEDSREVIEW_TRANSLATIONS and int(p_review_name) > 0:
                     may_print = True
 
                 # Print the row
@@ -161,7 +164,7 @@ class TranslationStatus:
                 #else:
                 #   debug ("## %s is skipped" % (p_name))
 
-        # Add come informative comments
+        # Add some information
         self.addline("||<style=\"border:0;\"> Total untranslated ||<style=\"border:0;\"> %s ||<style=\"border:0;\"> %s ||<style=\"border:0; colspan=3;\">  ||" % (total_untr, total_review))
         self.addline("||<style=\"border:0;\"> Total upstream ||<style=\"border:0;\"> %s ||<style=\"border:0;\"> %s ||<style=\"border:0; colspan=3;\"> ||" % (total_untr_upstream, total_review_upstream))
         self.addline("||<style=\"border:0;\"> TODO ||<style=\"border:0;\"> '''%s''' ||<style=\"border:0;\"> '''%s''' ||<style=\"border:0; colspan=3;\"> ||" % (total_untr-total_untr_upstream, total_review-total_review_upstream))
@@ -219,7 +222,6 @@ class TranslationStatus:
                     upstream = False
                     pname = tokens[1].strip()
 
-
                     # GAE does not support flags=re.IGNORECASE
                     #package_name = re.sub("<#cccccc>", "", pname, flags=re.IGNORECASE).strip()   # Strip upstream?
                     package_name = re.sub("<#cccccc>", "", pname).strip()   # Strip upstream?
@@ -262,7 +264,11 @@ class TranslationStatus:
         if upstream:
             color = "<#cccccc>"     # grey
         elif u_nr == "0":
-            color = "<#55FF55>"     # green
+            if r_nr != "0":
+                color = "<#00AAFF>"     # blue
+                r = "[["+URL_PREFIX+r_url+"|"+r_nr+"|target=\"_new\"]]"
+            else:
+                color = "<#55FF55>"     # green
         elif review:
             color = "<#00AAFF>"     # blue
             u = "[["+URL_PREFIX+u_url+"|"+u_nr+"|target=\"_new\"]]"
